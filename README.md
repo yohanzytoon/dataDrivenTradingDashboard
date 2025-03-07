@@ -143,26 +143,6 @@ To use real market data with Alpha Vantage:
 2. Add your key to both backend and ML service .env files
 3. Set `USE_REAL_DATA=true` in the backend .env file
 
-## Project Structure
-
-```
-trading-dashboard/
-├── server/                # Backend Node.js server
-│   ├── services/          # Business logic
-│   ├── routes/            # API endpoints
-│   ├── models/            # Data models
-│   └── tests/             # Backend tests
-├── frontend/              # React frontend
-│   ├── src/
-│   │   ├── components/    # UI components
-│   │   ├── contexts/      # React contexts
-│   │   ├── pages/         # Page components
-│   │   └── services/      # API client services
-│   └── public/            # Static assets
-└── ml-service/            # Python ML service
-    ├── models/            # Saved ML models
-    └── tests/             # ML service tests
-```
 
 ## API Documentation
 
@@ -209,10 +189,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Alpha Vantage](https://www.alphavantage.co/) for market data API
-- [TensorFlow](https://www.tensorflow.org/) for machine learning capabilities
-- [Recharts](https://recharts.org/) for React charting components
-- [Tailwind CSS](https://tailwindcss.com/) for styling
