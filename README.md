@@ -53,7 +53,7 @@ This project consists of three main components:
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/trading-dashboard.git
+git clone https://github.com/yohanzytoon/TradingDashboard.git
 cd trading-dashboard
 ```
 
