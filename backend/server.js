@@ -1,5 +1,3 @@
-// server.js - Enhanced server with improved error handling, security, and modularity
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -13,7 +11,6 @@ const { Server } = require('socket.io');
 const mongoose = require('mongoose');
 const compression = require('compression'); // Add compression for responses
 
-// Advanced rate limiting
 const rateLimit = require('express-rate-limit');
 
 // Create logs directory if it doesn't exist
