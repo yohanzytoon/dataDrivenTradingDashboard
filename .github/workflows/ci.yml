@@ -146,7 +146,7 @@ jobs:
       
       # Build and push Backend image
       - name: Build and push Backend
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile.backend
@@ -159,7 +159,7 @@ jobs:
       
       # Build and push Frontend image
       - name: Build and push Frontend
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile.frontend
@@ -172,7 +172,7 @@ jobs:
       
       # Build and push ML Service image
       - name: Build and push ML Service
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./ml-service
           file: ./ml-service/Dockerfile.ml
