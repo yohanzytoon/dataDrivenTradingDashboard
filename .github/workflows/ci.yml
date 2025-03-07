@@ -1,0 +1,184 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Backend tests and linting
+  backend-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      # Setup MongoDB for testing
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        run: cd backend && npm ci
+      
+      - name: Lint code
+        run: cd backend && npm run lint
+      
+      - name: Run tests
+        run: cd backend && npm test
+        env:
+          CI: true
+          MONGODB_URI: mongodb://localhost:27017/trading-dashboard-test
+          JWT_SECRET: test_jwt_secret
+      
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./backend/coverage
+          flags: backend
+          name: backend-coverage
+  
+  # Frontend tests and linting
+  frontend-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install dependencies
+        run: cd frontend && npm ci
+      
+      - name: Lint code
+        run: cd frontend && npm run lint
+      
+      - name: Run tests
+        run: cd frontend && npm test
+        env:
+          CI: true
+      
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./frontend/coverage
+          flags: frontend
+          name: frontend-coverage
+  
+  # ML service tests
+  ml-service-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f ml-service/requirements.txt ]; then pip install -r ml-service/requirements.txt; fi
+          pip install pytest pytest-cov flake8
+      
+      - name: Lint code
+        run: |
+          cd ml-service
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      
+      - name: Run tests
+        run: |
+          cd ml-service
+          pytest --cov=. --cov-report=xml
+      
+      - name: Upload test coverage
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./ml-service
+          file: ./ml-service/coverage.xml
+          flags: ml-service
+          name: ml-service-coverage
+  
+  # Build Docker images
+  build-images:
+    needs: [backend-test, frontend-test, ml-service-test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Extract branch name
+        id: extract_branch
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+      
+      - name: Get build timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +%s)"
+      
+      # Build and push Backend image
+      - name: Build and push Backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile.backend
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-backend:${{ steps.extract_branch.outputs.branch }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-backend:${{ steps.extract_branch.outputs.branch }}-${{ steps.timestamp.outputs.timestamp }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-backend:${{ steps.extract_branch.outputs.branch }}-buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-backend:${{ steps.extract_branch.outputs.branch }}-buildcache,mode=max
+      
+      # Build and push Frontend image
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.frontend
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-frontend:${{ steps.extract_branch.outputs.branch }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-frontend:${{ steps.extract_branch.outputs.branch }}-${{ steps.timestamp.outputs.timestamp }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-frontend:${{ steps.extract_branch.outputs.branch }}-buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-frontend:${{ steps.extract_branch.outputs.branch }}-buildcache,mode=max
+      
+      # Build and push ML Service image
+      - name: Build and push ML Service
+        uses: docker/build-push-action@v4
+        with:
+          context: ./ml-service
+          file: ./ml-service/Dockerfile.ml
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-ml-service:${{ steps.extract_branch.outputs.branch }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-ml-service:${{ steps.extract_branch.outputs.branch }}-${{ steps.timestamp.outputs.timestamp }}
+          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-ml-service:${{ steps.extract_branch.outputs.branch }}-buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/trading-dashboard-ml-service:${{ steps.extract_branch.outputs.branch }}-buildcache,mode=max

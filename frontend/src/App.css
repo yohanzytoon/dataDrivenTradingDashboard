@@ -1,0 +1,50 @@
+/* Text colors for better visibility on dark backgrounds */
+.dashboard-text,
+.price-value,
+.time-labels,
+.chart-labels,
+.forecast-text,
+.stat-value {
+  color: #ffffff; /* Bright white for primary text */
+}
+
+/* Axis labels and secondary text */
+.axis-label,
+.secondary-text,
+.volume-label {
+  color: #e0e0e0; /* Light gray for secondary text */
+}
+
+/* Ensuring alerts are clearly visible */
+.alert-message {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Make positive values stand out */
+.positive-value {
+  color: #4ade80; /* Bright green */
+  font-weight: bold;
+}
+
+/* Make negative values stand out */
+.negative-value {
+  color: #f87171; /* Bright red */
+  font-weight: bold;
+}
+
+/* Improve visibility of the chart lines */
+.chart-line {
+  stroke-width: 2px; /* Thicker line */
+}
+
+/* Improve axis grid lines visibility */
+.grid-line {
+  stroke: rgba(255, 255, 255, 0.1); /* More visible grid lines */
+}
+
+/* Better contrast for forecast boxes */
+.forecast-box {
+  background-color: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}

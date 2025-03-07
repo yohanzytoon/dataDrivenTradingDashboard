@@ -1,0 +1,129 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.development
+.env.production
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing
+coverage/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+
+# Production build
+/build
+/dist
+
+# Misc
+.DS_Store
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+
+# Python specific
+*.so
+.Python
+*.pot
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+instance/
+.webassets-cache
+.scrapy
+*.sage.py
+celerybeat-schedule
+celerybeat.pid
+*.spec
+.ipynb_checkpoints
+.python-version
+poetry.toml
+
+# ML models (often large files)
+*.h5
+*.pkl
+*.model
+*.pt
+*.pth
+*.onnx
+# Uncomment if you want to include models in version control
+# !models/README.md
+
+# Database
+*.sqlite
+*.db
+mongodb/
+dump.rdb
+
+# Temporary files
+tmp/
+temp/
+
+# OS specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Enhanced dark mode styles with tooltip fixes -->
+    <style>
+      /* Base text color for all elements */
+      body {
+        color: #ffffff;
+        background-color: #1e293b;
+      }
+      
+      /* Text elements throughout the dashboard */
+      div, span, p, h1, h2, h3, h4, h5, h6, label {
+        color: #ffffff;
+      }
+      
+      /* SVG text elements (chart labels, etc) */
+      text, tspan {
+        fill: #ffffff;
+      }
+      
+      /* Chart axis labels */
+      .recharts-text, .recharts-cartesian-axis-tick-value {
+        fill: #ffffff;
+      }
+      
+      /* Price axis label in green */
+      .price-label, .price-value, [data-type="price"] {
+        fill: #4ade80;
+        color: #4ade80;
+      }
+      
+      /* Positive values (green) */
+      .positive, .trend-up {
+        color: #4ade80 !important;
+      }
+      
+      /* Arrow up indicators */
+      [class*="arrow-up"],
+      span:has(svg[data-icon="arrow-up"]) {
+        color: #4ade80 !important;
+      }
+      
+      /* Negative values (red) */
+      .negative, .trend-down {
+        color: #f87171 !important;
+      }
+      
+      /* Arrow down indicators */
+      [class*="arrow-down"],
+      span:has(svg[data-icon="arrow-down"]) {
+        color: #f87171 !important;
+      }
+      
+      /* Stats and metrics */
+      .metrics-value, .forecast-value, .stat-value {
+        color: #ffffff;
+        font-weight: 500;
+      }
+      
+      /* Dollar amounts */
+      .currency-value {
+        color: #ffffff;
+        font-weight: 500;
+      }
+      
+      /* Alert styling */
+      .alert, .alert-item {
+        color: #f87171;
+      }
+      
+      /* Fix for trading metrics panels */
+      .metrics-panel {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.375rem;
+      }
+      
+      /* Fix for market sentiment indicator */
+      .sentiment-indicator {
+        background-color: transparent;
+      }
+      
+      /* Make sure sentiment labels are visible */
+      .sentiment-label {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      /* Active sentiment should be bold and fully opaque */
+      .sentiment-active {
+        color: #ffffff;
+        font-weight: 600;
+      }
+      
+      /* Make volume bars visible */
+      .volume-bar {
+        fill: #818cf8;
+        opacity: 0.9;
+      }
+      
+      /* ===== PANELS & CARDS ===== */
+      
+      /* Fix white backgrounds in forecast cards and metrics panels */
+      .forecast-card, 
+      .metrics-card,
+      [class*="forecast"],
+      [class*="metrics"],
+      .card {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 0.375rem !important;
+      }
+      
+      /* Trading metrics boxes */
+      .metrics-box,
+      [id*="metrics"] > div,
+      [class*="metrics"] > div,
+      .trading-metrics > div {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 0.375rem !important;
+      }
+      
+      /* Fix alert backgrounds */
+      .alert-panel,
+      .alert-item,
+      [class*="alert-"],
+      [id*="alert"] {
+        background-color: rgba(30, 41, 59, 0.9) !important;
+        border: 1px solid rgba(248, 113, 113, 0.3) !important;
+        border-radius: 0.375rem !important;
+        color: #f87171 !important;
+      }
+      
+      /* Make alert icons visible */
+      [class*="alert"] svg,
+      [class*="alert"] path,
+      [class*="alert"] g {
+        fill: #f87171 !important;
+        color: #f87171 !important;
+      }
+      
+      /* Forecast values */
+      [class*="forecast"] span,
+      .forecast-value,
+      .forecast-percentage {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+      
+      /* Positive forecast values */
+      [class*="forecast"] span:has(> *:contains("+")),
+      .forecast-value.positive,
+      .forecast-percentage.positive {
+        color: #4ade80 !important;
+      }
+      
+      /* Metrics panel titles */
+      .metrics-title,
+      .panel-title,
+      .card-title,
+      h3, h4 {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+      
+      /* Metrics values */
+      .metrics-value,
+      .panel-value,
+      .card-value {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+      
+      /* ===== TOOLTIP FIXES ===== */
+      
+      /* Chart tooltips - fix the white background issue */
+      .recharts-tooltip-wrapper,
+      .recharts-default-tooltip,
+      .recharts-tooltip,
+      [class*="tooltip"],
+      [class*="Tooltip"] {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 0.375rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
+        color: #ffffff !important;
+        opacity: 0.95 !important;
+      }
+      
+      /* Target all tooltip backgrounds directly */
+      .recharts-tooltip-wrapper rect,
+      .recharts-tooltip-cursor,
+      .recharts-tooltip-item,
+      [class*="tooltip"] div,
+      [class*="tooltip"] rect,
+      [class*="tooltip"] span,
+      [class*="tooltip"] p {
+        fill: #1e293b !important;
+        stroke: rgba(255, 255, 255, 0.1) !important;
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+      }
+      
+      /* Tooltip item name/label */
+      .recharts-tooltip-item-name,
+      .tooltip-label,
+      .tooltip-name {
+        color: #94a3b8 !important;
+      }
+      
+      /* Tooltip item value */
+      .recharts-tooltip-item-value,
+      .tooltip-value {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+      
+      /* Tooltip price values */
+      .tooltip-price,
+      [class*="tooltip-price"],
+      .recharts-tooltip-item-value[data-type="price"] {
+        color: #4ade80 !important;
+      }
+      
+      /* Tooltip time/date values */
+      .tooltip-time,
+      .tooltip-date,
+      [class*="tooltip-time"] {
+        color: #94a3b8 !important;
+        font-size: 0.875rem !important;
+      }
+      
+      /* Override any tooltip canvas elements */
+      canvas.recharts-tooltip-cursor {
+        fill: rgba(30, 41, 59, 0.8) !important;
+      }
+      
+      /* Force all tooltip content to be visible */
+      .recharts-tooltip-wrapper * {
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      
+      /* ===== TARGETED FIXES FOR SPECIFIC PANELS ===== */
+      
+      /* Target Trading Metrics section and cards specifically */
+      #trading-metrics-panel .card,
+      #trading-metrics .card,
+      [id*="trading-metrics"] > div,
+      div:has(> h3:contains("Trading Metrics")) > div,
+      div:has(> h3:contains("Trading Metrics")) .card,
+      div:has(> div:contains("52W High")) {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Target ML Forecasts section and cards specifically */
+      #ml-price-forecasts-panel .card,
+      #ml-price-forecasts .card,
+      [id*="ml-price-forecasts"] > div,
+      div:has(> h3:contains("ML Price Forecasts")) > div,
+      div:has(> h3:contains("ML Price Forecasts")) .card,
+      div:has(> div:contains("15min Forecast")) {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Forcefully override any whites */
+      div[style*="background-color:"] {
+        background-color: #1e293b !important;
+      }
+      
+      /* Target all cards in the dashboard more broadly */
+      [class*="card"],
+      .card,
+      .panel > div,
+      .grid > div {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+      }
+      
+      /* Target alert panel backgrounds specifically */
+      #market-alerts .alert-item,
+      [id*="market-alerts"] .alert-item,
+      div:has(> h3:contains("Market Alerts")) > div,
+      div:has(> span:contains("Market Alerts")) + div > div {
+        background-color: rgba(248, 113, 113, 0.15) !important;
+        border: 1px solid rgba(248, 113, 113, 0.3) !important;
+        color: #ffffff !important;
+      }
+      
+      /* Fix blue highlights on values */
+      [style*="background-color: rgb(173, 216, 230)"],
+      [style*="background-color: rgb(173,216,230)"],
+      [style*="background-color: lightblue"],
+      [style*="background-color:#ADD8E6"] {
+        background-color: rgba(56, 189, 248, 0.2) !important;
+        color: #ffffff !important;
+        font-weight: bold !important;
+      }
+      
+      /* Currency values */
+      [class*="currency"],
+      .currency-value,
+      span:contains("$"),
+      div:contains("$") {
+        color: #ffffff !important;
+        font-weight: bold !important;
+      }
+      
+      /* Titles in cards */
+      .card-title,
+      .card-header,
+      .card > div:first-child {
+        color: #94a3b8 !important;
+      }
+      
+      /* Values in cards */
+      .card-value,
+      .card-content,
+      .card > div:nth-child(2) {
+        color: #ffffff !important;
+        font-weight: bold !important;
+      }
+      
+      /* Additional specificity for alert text */
+      [id*="market-alerts"] .alert-item span,
+      [id*="market-alerts"] .alert-item div,
+      div:has(> h3:contains("Market Alerts")) > div span,
+      div:has(> h3:contains("Market Alerts")) > div div {
+        color: #ffffff !important;
+      }
+      
+      /* Alert icons */
+      [id*="market-alerts"] svg,
+      [id*="market-alerts"] path,
+      [id*="market-alerts"] g {
+        fill: #f87171 !important;
+        color: #f87171 !important;
+      }
+      
+      /* ===== ADDITIONAL FINE-TUNING ===== */
+      
+      /* Ensure all inputs and selects are dark themed */
+      input, select, textarea, button {
+        background-color: #1e293b !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      }
+      
+      /* Fix ML forecast cards specifically */
+      [id*="ml-price-forecasts"] .card,
+      [id*="ml-price-forecasts"] > div,
+      [id*="ml-price-forecasts"] > div > div {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Forecast times */
+      [id*="forecast"] span:first-child,
+      .forecast-time,
+      .forecast-label {
+        color: #94a3b8 !important;
+      }
+      
+      /* Target trading metrics specifically */
+      [id*="trading-metrics"] .card,
+      [id*="trading-metrics"] > div,
+      #trading-metrics > div > div,
+      .trading-metrics-grid > div {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        padding: 0.75rem !important;
+      }
+      
+      /* ===== ULTIMATE OVERRIDES ===== */
+      
+      /* Target elements with inline styles directly */
+      [style*="background-color"],
+      [style*="background:"],
+      [style*="background"] {
+        background-color: #1e293b !important;
+        background: #1e293b !important;
+      }
+      
+      /* Target alert panel backgrounds with ultimate specificity */
+      [style*="background-color"]:has(span:contains("Unusual volume")),
+      [style*="background-color"]:has(span:contains("RSI indicates")),
+      [style*="background-color"]:has(span:contains("MACD")),
+      div:has(> span:contains("Unusual")),
+      div:has(> span:contains("RSI")),
+      div:has(> span:contains("MACD")) {
+        background-color: rgba(248, 113, 113, 0.15) !important;
+        border: 1px solid rgba(248, 113, 113, 0.3) !important;
+      }
+      
+      /* Ensure all alert text is white */
+      [style*="background-color"]:has(span:contains("Unusual volume")) *,
+      [style*="background-color"]:has(span:contains("RSI indicates")) *,
+      [style*="background-color"]:has(span:contains("MACD")) *,
+      div:has(> span:contains("Unusual")) *,
+      div:has(> span:contains("RSI")) *,
+      div:has(> span:contains("MACD")) * {
+        color: #ffffff !important;
+      }
+      
+      /* Apply !important to every color property */
+      * {
+        background-color: inherit !important;
+      }
+      
+      /* Card styles with the highest specificity */
+      div[class],
+      div[id],
+      div[style] {
+        background-color: #1e293b !important;
+      }
+      
+      /* Specifically target those blue value boxes */
+      [style*="rgb(173, 216, 230)"],
+      [style*="lightblue"],
+      [style*="rgb(173,216,230)"] {
+        background-color: rgba(56, 189, 248, 0.15) !important;
+        color: #ffffff !important;
+      }
+      
+      /* Target values inside cards with strong specificity */
+      div > div > span,
+      div > div > p,
+      .card-content > span,
+      .card-value {
+        color: #ffffff !important;
+      }
+      
+      /* Market Sentiment Indicator Fix - FIXED VERSION */
+      /* Make sentiment indicator background visible */
+      .sentiment-indicator,
+      [class*="sentiment-indicator"],
+      div[class*="market-sentiment"] div:not(:has(*)) {
+        position: relative !important;
+        height: 6px !important;
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 3px !important;
+        margin: 10px 0 !important;
+        display: block !important;
+        width: 100% !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      /* Create a visible active marker */
+      .sentiment-indicator::after,
+      [class*="sentiment-indicator"]::after,
+      div[class*="market-sentiment"] div:not(:has(*))::after {
+        content: '' !important;
+        position: absolute !important;
+        height: 10px !important;
+        width: 10px !important;
+        background-color: #4ade80 !important;
+        border-radius: 50% !important;
+        top: -2px !important;
+        transform: translateX(-50%) !important;
+        /* Position for Slightly Bullish */
+        left: 70% !important;
+        box-shadow: 0 0 8px rgba(74, 222, 128, 0.6) !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      /* Highlight the active sentiment label */
+      .sentiment-active,
+      div:has(> span:contains("Slightly Bullish")) span {
+        color: #4ade80 !important;
+        font-weight: 600 !important;
+      }
+
+      /* Ensure all sentiment labels are visible */
+      .sentiment-label {
+        color: rgba(255, 255, 255, 0.7) !important;
+        display: inline-block !important;
+        margin: 0 10px !important;
+        font-size: 14px !important;
+        visibility: visible !important;
+      }
+
+      /* Position the indicator properly */
+      #market-sentiment, 
+      .market-sentiment,
+      [id*="sentiment"],
+      div:has(> h3:contains("Market Sentiment")) {
+        background-color: #1e293b !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px !important;
+        padding: 15px !important;
+        margin-bottom: 20px !important;
+        display: block !important;
+        visibility: visible !important;
+      }
+    </style>
+   
+    <!-- JavaScript fix for stubborn elements -->
+    <script>
+      // This script will run after the page loads
+      document.addEventListener('DOMContentLoaded', function() {
+        // Function to recursively process all elements
+        function applyDarkMode(element) {
+          // Skip SVG elements to avoid breaking charts
+          if (element instanceof SVGElement) return;
+          
+          // Force dark backgrounds on divs
+          if (element.tagName === 'DIV') {
+            const computedStyle = window.getComputedStyle(element);
+            const bgColor = computedStyle.backgroundColor;
+            
+            // If background is white or light
+            if (bgColor === 'rgb(255, 255, 255)' || 
+                bgColor === 'rgba(255, 255, 255, 1)' ||
+                bgColor.startsWith('rgb(2') ||
+                bgColor.includes('255')) {
+              element.style.setProperty('background-color', '#1e293b', 'important');
+            }
+            
+            // If it's a light pink alert background
+            if (bgColor.startsWith('rgb(255, 2') || 
+                bgColor.startsWith('rgb(255,2') || 
+                bgColor.includes('pink')) {
+              element.style.setProperty('background-color', 'rgba(248, 113, 113, 0.15)', 'important');
+              element.style.setProperty('border', '1px solid rgba(248, 113, 113, 0.3)', 'important');
+            }
+          }
+          
+          // Process children recursively
+          for (let i = 0; i < element.children.length; i++) {
+            applyDarkMode(element.children[i]);
+          }
+        }
+        
+        // Function to ensure the sentiment indicator is visible
+        function fixSentimentIndicator() {
+          // Look for sentinel indicators in the market sentiment section
+          const sentimentDivs = document.querySelectorAll('div[class*="sentiment-indicator"], [class*="market-sentiment"] div:not(:has(*))');
+          
+          sentimentDivs.forEach(div => {
+            // Force the indicator to be visible
+            div.style.setProperty('display', 'block', 'important');
+            div.style.setProperty('visibility', 'visible', 'important');
+            div.style.setProperty('height', '6px', 'important');
+            div.style.setProperty('background-color', 'rgba(255, 255, 255, 0.2)', 'important');
+            div.style.setProperty('border-radius', '3px', 'important');
+            div.style.setProperty('opacity', '1', 'important');
+          });
+        }
+        
+        // Start processing from document body
+        applyDarkMode(document.body);
+        
+        // Fix the sentiment indicator specifically
+        setTimeout(fixSentimentIndicator, 500);
+        
+        // Set interval to catch dynamically added elements
+        setInterval(function() {
+          applyDarkMode(document.body);
+          fixSentimentIndicator();
+        }, 1000);
+      });
+    </script>
+    
+    <title>Trading Dashboard</title>
+  </head>
+  <body class="bg-slate-900">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

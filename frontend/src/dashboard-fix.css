@@ -1,0 +1,105 @@
+/* Main dashboard text improvements */
+#root {
+    color: #ffffff; /* Set base text color to white */
+  }
+  
+  /* Time labels under chart */
+  text,
+  .recharts-cartesian-axis-tick-value,
+  .recharts-text {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+  }
+  
+  /* Price label improvement */
+  text[class*="Price"],
+  .price-label,
+  [data-testid="price-label"] {
+    fill: #4ade80 !important;
+    color: #4ade80 !important;
+  }
+  
+  /* Make stock symbols and data more visible */
+  .stock-label,
+  .ticker-symbol {
+    color: #ffffff !important;
+    font-weight: 500;
+  }
+  
+  /* Forecast section */
+  [class*="Forecast"] {
+    color: #ffffff !important;
+  }
+  
+  /* Make $ values clearer */
+  [class*="Forecast"] + div,
+  .price-value,
+  [data-testid="price-value"] {
+    color: #ffffff !important;
+    font-weight: bold;
+  }
+  
+  /* Alert container visibility */
+  [class*="alert"],
+  [data-testid*="alert"] {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  }
+  
+  /* Alert text visibility */
+  [class*="alert"] span,
+  [data-testid*="alert"] span {
+    color: #f87171 !important;
+  }
+  
+  /* Stats labels */
+  .stat-label,
+  [data-testid="stat-label"] {
+    color: #d1d5db !important;
+  }
+  
+  /* Stats values */
+  .stat-value,
+  [data-testid="stat-value"] {
+    color: #ffffff !important;
+    font-weight: bold;
+  }
+  
+  /* Positive and negative changes */
+  [class*="positive"],
+  .text-green-400,
+  .text-green-500,
+  [data-testid*="positive"] {
+    color: #4ade80 !important;
+    fill: #4ade80 !important;
+  }
+  
+  [class*="negative"],
+  .text-red-400,
+  .text-red-500,
+  [data-testid*="negative"] {
+    color: #f87171 !important;
+    fill: #f87171 !important;
+  }
+  
+  /* Live label */
+  .live-label,
+  [data-testid="live-label"] {
+    color: #d1d5db !important;
+  }
+  
+  /* Chart improvements */
+  path[class*="line"] {
+    stroke-width: 2px;
+  }
+  
+  /* Override any !important styles that might be causing issues */
+  * {
+    color: inherit;
+  }
+  
+  /* Better visibility for x-axis time labels */
+  tspan,
+  .recharts-label {
+    fill: #ffffff !important;
+  }
