@@ -42,7 +42,7 @@ jobs:
           JWT_SECRET: test_jwt_secret
       
       - name: Upload test coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           directory: ./backend/coverage
           flags: backend
@@ -74,7 +74,7 @@ jobs:
           CI: true
       
       - name: Upload test coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           directory: ./frontend/coverage
           flags: frontend
@@ -111,7 +111,7 @@ jobs:
           pytest --cov=. --cov-report=xml
       
       - name: Upload test coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           directory: ./ml-service
           file: ./ml-service/coverage.xml
